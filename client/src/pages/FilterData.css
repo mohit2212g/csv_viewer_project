@@ -1,0 +1,31 @@
+.filter-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .filter-nav ul li {
+    margin-right: 20px;
+  }
+
+  .filter-nav ul li h2 {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .filter-nav ul li button {
+    background-color: orange;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 5px;
+  }
+
+  .filter-nav ul li button:hover {
+    background-color: darkorange;
+  }

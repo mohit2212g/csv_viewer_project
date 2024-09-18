@@ -1,6 +1,6 @@
-// components/Loader.js
+
 import React from 'react';
-import './Loader.css'; // Add your CSS for styling the loader
+import './Loader.css';
 
 const Loader = () => {
   return (

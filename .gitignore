@@ -1,2 +1,4 @@
 /venv
 .env
+/sqllite3_database
+/uploads

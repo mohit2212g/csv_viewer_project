@@ -43,6 +43,10 @@ th {
   align-items: center;
 }
 
+.button-container ul li {
+  margin: 0 10px; 
+}
+
 .button-container ul li button {
   background-color: rgb(65, 64, 64);
   border: none;

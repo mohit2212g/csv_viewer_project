@@ -23,8 +23,8 @@
 }
 
 .box {
-    width: 60px;
-    height: 60px;
+    width: 100%/(25, 1fr);
+    height: 100%/(25, 1fr);
     background-color: transparent;
     border: 1px solid orange;
     transition: background-color 1s ease;
