@@ -12,6 +12,9 @@ from flask import send_file
 app = Flask(__name__)
 CORS(app)
 
+# Set the maximum request size to 10GB
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 * 1024
+
 SECRET_KEY = 'your_secret_key_here'
 
 database_folder = 'sqllite3_database'
@@ -110,10 +113,14 @@ def upload_csv(username):
 
     file = request.files['file']
     print("file : " , file)
+    print("filename : ", file.filename)
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
+    
+    print("###############", file)
 
-    if file and file.filename.endswith('.csv'):
+    if file and file.filename.lower().endswith('.csv'):
+        print("###############", file)
         file_path = os.path.join(uploads_folder, f'{username}.csv')
         file.save(file_path)
 
@@ -192,6 +199,7 @@ def get_table_data(username):
 
 @app.route('/filtered-data/<username>', methods=['GET'])
 def get_filtered_data(username):
+    print("get_filtered_data called")
     try:
         filters = request.args.get('filters', '{}')
         page = int(request.args.get('page', 1))

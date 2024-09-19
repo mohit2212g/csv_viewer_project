@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import "./FilterData.css";
 import Header from "../components/Header";
@@ -16,6 +16,9 @@ const FilterData = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const prevFilters = useRef(filters);
+  const prevPage = useRef(page);
+
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const initialFilters = location.state?.filters || {};
@@ -29,7 +32,8 @@ const FilterData = () => {
     setFilters(initialFilters);
   }, [location.search]);
 
-  const fetchFilteredData = async () => {
+  const fetchFilteredData = useCallback(async () => {
+    console.log("fetchFilteredData called");
     setLoading(true);
     try {
       const response = await axios.get(
@@ -65,9 +69,10 @@ const FilterData = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, page, username]);
 
-  const fetchTotalFilteredRecords = async () => {
+  const fetchTotalFilteredRecords = useCallback(async () => {
+    console.log("fetchTotalFilteredRecords called");
     try {
       const response = await axios.get(
         `http://192.168.10.107:5001/total-filter-records/${username}`,
@@ -84,12 +89,22 @@ const FilterData = () => {
     } catch (error) {
       console.error("Error fetching total filtered records:", error);
     }
-  };
+  }, [filters, username]);
 
   useEffect(() => {
-    fetchTotalFilteredRecords();
-    fetchFilteredData();
-  }, [filters, page]);
+     if (
+      JSON.stringify(prevFilters.current) !== JSON.stringify(filters) ||
+      prevPage.current !== page
+    )
+      {
+      console.log('useEffect triggered', { filters, page });
+      fetchTotalFilteredRecords();
+      fetchFilteredData();
+      prevFilters.current = filters;
+      prevPage.current = page;
+    }
+ 
+  }, [fetchTotalFilteredRecords, fetchFilteredData]);
 
   const handleFilterChange = (e, columnName) => {
     const { value } = e.target;
@@ -142,14 +157,13 @@ const FilterData = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          responseType: 'blob', // Important for handling file downloads
+          responseType: 'blob',
         }
       );
-      // Create a URL for the file and trigger the download
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'filtered_data.csv'); // Name of the downloaded file
+      link.setAttribute('download', 'filtered_data.csv');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
